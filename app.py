@@ -60,7 +60,8 @@ class ForensicCleaner:
         url = f"https://projects.propublica.org/nonprofits/api/v2/organizations/{clean_ein}.json"
         try:
             time.sleep(0.1)
-            resp = requests.get(url, timeout=5)
+            headers = {"User-Agent": "AntigravityForensicUnit/1.0 (internal-research-tool)"}
+            resp = requests.get(url, headers=headers, timeout=5)
             resp.raise_for_status()
             org = resp.json().get("organization", {}) if resp.content else {}
             return {

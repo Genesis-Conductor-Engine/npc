@@ -126,7 +126,102 @@
                 </tr>`;
             }).join('');
 
-            // (Charts would be initialized and updated here - simplified for script size)
+            // Render KPIs
+            const totalAssets = appState.data.reduce((acc, item) => acc + item.assets, 0);
+            const zombieCount = appState.data.filter(i => i.status === 'Zombie Entity').length;
+            const revokedCount = appState.data.filter(i => i.status === 'Revoked').length;
+            const goodCount = appState.data.filter(i => i.status === 'Good Standing').length;
+
+            const kpiHTML = `
+                <div class="bg-white p-6 rounded shadow-sm border border-slate-200">
+                    <h3 class="text-xs font-semibold text-slate-500 uppercase">Total Sector Assets</h3>
+                    <p class="text-2xl font-bold text-slate-900 mt-2">${formatCurrency(totalAssets)}</p>
+                </div>
+                <div class="bg-white p-6 rounded shadow-sm border border-slate-200">
+                    <h3 class="text-xs font-semibold text-slate-500 uppercase">Active Entities</h3>
+                    <p class="text-2xl font-bold text-emerald-600 mt-2">${goodCount}</p>
+                </div>
+                <div class="bg-white p-6 rounded shadow-sm border border-slate-200">
+                    <h3 class="text-xs font-semibold text-slate-500 uppercase">Revoked / Forfeited</h3>
+                    <p class="text-2xl font-bold text-red-600 mt-2">${revokedCount}</p>
+                </div>
+                <div class="bg-white p-6 rounded shadow-sm border border-slate-200">
+                    <h3 class="text-xs font-semibold text-slate-500 uppercase">Zombie Entities</h3>
+                    <p class="text-2xl font-bold text-purple-600 mt-2">${zombieCount}</p>
+                </div>
+            `;
+            document.getElementById('kpi-section').innerHTML = kpiHTML;
+
+            // Render Financial Scatter Chart
+            const ctxScatter = document.getElementById('financialScatterChart').getContext('2d');
+
+            // Destroy existing chart if it exists to allow re-rendering
+            if(window.financialChart) window.financialChart.destroy();
+
+            window.financialChart = new Chart(ctxScatter, {
+                type: 'scatter',
+                data: {
+                    datasets: [{
+                        label: 'Financial Health',
+                        data: appState.data.map(i => ({ x: i.income, y: i.assets, r: 5, entity: i })),
+                        backgroundColor: appState.data.map(i => i.status === 'Good Standing' ? 'rgba(16, 185, 129, 0.6)' : 'rgba(239, 68, 68, 0.6)'),
+                        borderColor: appState.data.map(i => i.status === 'Good Standing' ? 'rgb(16, 185, 129)' : 'rgb(239, 68, 68)'),
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const item = context.raw.entity;
+                                    return `${item.name}: Inc ${formatCurrency(item.income)} / Ast ${formatCurrency(item.assets)}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: { title: { display: true, text: 'Annual Income' }, grid: { display: false } },
+                        y: { title: { display: true, text: 'Total Assets' } }
+                    }
+                }
+            });
+
+            // Render Compliance Pie Chart
+            const ctxPie = document.getElementById('complianceChart').getContext('2d');
+
+            if(window.complianceChart) window.complianceChart.destroy();
+
+            window.complianceChart = new Chart(ctxPie, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Good Standing', 'Revoked', 'Zombie', 'Unknown'],
+                    datasets: [{
+                        data: [
+                            goodCount,
+                            revokedCount,
+                            zombieCount,
+                            appState.data.filter(i => i.status === 'Unknown').length
+                        ],
+                        backgroundColor: [
+                            '#10b981', // green
+                            '#ef4444', // red
+                            '#8b5cf6', // purple
+                            '#94a3b8'  // slate
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'right' }
+                    }
+                }
+            });
         }
 
         window.addEventListener('DOMContentLoaded', () => {
