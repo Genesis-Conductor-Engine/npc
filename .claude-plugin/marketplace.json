@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
+  "name": "npc",
+  "owner": {
+    "name": "Genesis Conductor Engine (Igor Holt @invariantx)",
+    "url": "https://github.com/Genesis-Conductor-Engine"
+  },
+  "description": "NPC experimental repository in the Genesis Conductor Engine org. Lower-profile public straggler covered during the Claude Marketplace Manifest Rollout to ensure complete Genesis Conductor / @invariantx public surface has ecosystem manifests.",
+  "version": "1.0.0",
+  "homepage": "https://github.com/Genesis-Conductor-Engine/npc",
+  "keywords": [
+    "genesis-conductor",
+    "invariantx",
+    "npc",
+    "experimental",
+    "openclaw-ecosystem"
+  ],
+  "plugins": [
+    {
+      "name": "npc",
+      "source": "https://github.com/Genesis-Conductor-Engine/npc",
+      "description": "Experimental NPC component in Genesis Conductor org public repos. Ties into the agentic and simulation surfaces of the ecosystem. Reference the primary OpenClaw skills marketplace by @invariantx for production-grade persistent state and MCP orchestration tools.",
+      "version": "1.0.0",
+      "tags": ["experimental", "npc", "genesis-conductor"],
+      "category": "experimental",
+      "homepage": "https://github.com/Genesis-Conductor-Engine/npc",
+      "keywords": ["genesis conductor npc", "@invariantx experimental"]
+    }
+  ],
+  "links": {
+    "github": "https://github.com/Genesis-Conductor-Engine/npc",
+    "main-marketplace": "https://github.com/igor-holt/openclaw-skills",
+    "x": "https://x.com/invariantx"
+  }
+}
